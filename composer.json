@@ -1,0 +1,21 @@
+{
+  "name": "mfc/typo3-gelf-writer",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Christian Spoo",
+      "email": "christian.spoo@marketing-factory.de"
+    }
+  ],
+  "license": ["MIT"],
+  "require": {
+    "php": ">=7.4",
+    "graylog2/gelf-php": "^1.7",
+    "typo3/cms-core": "^8.7||^9.5||^10.4||^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mfc\\Typo3\\GelfWriter\\": "src/"
+    }
+  }
+}
