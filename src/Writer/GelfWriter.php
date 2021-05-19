@@ -40,7 +40,8 @@ class GelfWriter extends AbstractWriter implements WriterInterface
     public function writeLog(LogRecord $record)
     {
         $host = php_uname('n');
-        $logLevel = LogLevel::getName($record->getLevel());
+        $recordLevel = $record->getLevel();
+        $logLevel = is_numeric($recordLevel) ? LogLevel::getName((int)$recordLevel) : $recordLevel;
         $shortMessage = $record->getMessage();
         $fullMessage = $record->getMessage();
         $data = array_merge(
