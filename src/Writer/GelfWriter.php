@@ -49,10 +49,10 @@ class GelfWriter extends AbstractWriter implements WriterInterface
             [
                 'component' => $record->getComponent(),
                 'request_id' => $record->getRequestId(),
-                'request_host' => $_SERVER['HTTP_HOST'],
-                'request_url' => $_SERVER['REQUEST_URI'],
-                'request_method' => $_SERVER['REQUEST_METHOD'],
-                'query_string' => $_SERVER['QUERY_STRING'],
+                'request_host' => $_SERVER['HTTP_HOST'] ?? '',
+                'request_url' => $_SERVER['REQUEST_URI'] ?? '',
+                'request_method' => $_SERVER['REQUEST_METHOD'] ?? '',
+                'query_string' => $_SERVER['QUERY_STRING'] ?? '',
             ],
             $this->additionalData,
         );
