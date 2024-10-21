@@ -28,6 +28,7 @@ class GelfWriter extends AbstractWriter implements WriterInterface
     protected int $port = 12201;
     protected string $protocol = 'tcp';
     protected string $facility = 'typo3';
+    protected string $url = '';
     protected array $additionalData = [];
 
     public function __construct(array $options = [])
@@ -42,8 +43,9 @@ class GelfWriter extends AbstractWriter implements WriterInterface
         $host = php_uname('n');
         $recordLevel = $record->getLevel();
         $logLevel = is_numeric($recordLevel) ? LogLevel::getName((int)$recordLevel) : $recordLevel;
-        $shortMessage = $record->getMessage();
-        $fullMessage = $record->getMessage();
+
+        $messageText = $this->interpolate($record->getMessage(), $record->getData());
+
         $data = array_merge(
             $record->getData(),
             [
@@ -61,8 +63,8 @@ class GelfWriter extends AbstractWriter implements WriterInterface
         $message
             ->setVersion('1.1')
             ->setHost($host)
-            ->setShortMessage($shortMessage)
-            ->setFullMessage($fullMessage)
+            ->setShortMessage($messageText)
+            ->setFullMessage($messageText)
             ->setLevel($logLevel);
 
         foreach ($data as $key => $value) {
@@ -82,7 +84,10 @@ class GelfWriter extends AbstractWriter implements WriterInterface
     private function createPublisher(): Publisher
     {
         $publisher = null;
-        if (!empty($this->hostname)) {
+        if (!empty($this->url)) {
+            $transport = HttpTransport::fromUrl($this->url);
+            $publisher = new Publisher($transport);
+        } elseif (!empty($this->hostname)) {
             switch ($this->protocol) {
                 case 'tcp':
                     $transport = new TcpTransport($this->hostname, $this->port);
@@ -196,6 +201,17 @@ class GelfWriter extends AbstractWriter implements WriterInterface
     public function setAdditionalData(array $additionalData): GelfWriter
     {
         $this->additionalData = $additionalData;
+        return $this;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): GelfWriter
+    {
+        $this->url = $url;
         return $this;
     }
 }
